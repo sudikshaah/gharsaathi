@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5 animate-fade-up">
+    <!-- Back button -->
+    <div class="mb-4">
+        <a href="{{ url_for('public.search_helpers') }}" class="btn btn-sm btn-glass-outline">
+            <i class="bi bi-arrow-left"></i> Back to Helpers
+        </a>
+    </div>
+
+    <div class="row g-4">
+        <!-- Main profile details Card -->
+        <div class="col-lg-8">
+            <div class="glass-panel p-5 mb-4">
+                <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-person-circle display-4 text-gradient me-3"></i>
+                        <div>
+                            <h1 class="mb-1 text-light">{{ helper.full_name }}</h1>
+                            <p class="text-secondary mb-0">{{ helper.gender.title() }} &bull; {{ helper.age }} years old &bull; {{ helper.religion or "N/A" }}</p>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-column gap-2 align-items-md-end">
+                        {% if helper.is_police_verified %}
+                            <span class="badge-verified"><i class="bi bi-shield-fill-check"></i> Police Verified</span>
+                        {% endif %}
+                        {% if helper.is_vaccinated %}
+                            <span class="badge-trust"><i class="bi bi-patch-check-fill"></i> Vaccinated</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <hr class="border-secondary border-opacity-25 my-4">
+
+                <h4 class="text-light mb-3">Professional Qualifications</h4>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="p-3 rounded border border-secondary border-opacity-10" style="background: rgba(255,255,255,0.01)">
+                            <small class="text-secondary d-block">Expected Salary</small>
+                            <strong class="fs-5 text-gradient">Rs. {{ helper.expected_salary }} / month</strong>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 rounded border border-secondary border-opacity-10" style="background: rgba(255,255,255,0.01)">
+                            <small class="text-secondary d-block">Experience</small>
+                            <strong class="fs-5 text-light">{{ helper.experience_years }} Years</strong>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 rounded border border-secondary border-opacity-10" style="background: rgba(255,255,255,0.01)">
+                            <small class="text-secondary d-block">Work Type</small>
+                            <strong class="fs-5 text-light">{{ helper.work_type.replace('_', '-').title() }}</strong>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 rounded border border-secondary border-opacity-10" style="background: rgba(255,255,255,0.01)">
+                            <small class="text-secondary d-block">Education Level</small>
+                            <strong class="fs-5 text-light">{{ helper.education_level or "Not Specified" }}</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 class="text-light mb-3">Skills & Capabilities</h4>
+                <div class="d-flex flex-wrap gap-2 mb-4">
+                    {% for skill in helper.skills %}
+                        <span class="badge bg-info bg-opacity-15 text-info border border-info border-opacity-30 px-3 py-2" style="font-size: 0.9rem;">
+                            {{ skill.skill_name }} <span class="text-secondary small">({{ skill.category }})</span>
+                        </span>
+                    {% else %}
+                        <p class="text-secondary mb-0 small">No specific skills listed.</p>
+                    {% endfor %}
+                </div>
+
+                <h4 class="text-light mb-3">Languages Spoken</h4>
+                <p class="text-light mb-0">{{ helper.languages_spoken or "Not Specified" }}</p>
+            </div>
+
+            <!-- Past Work Experience -->
+            <div class="glass-panel p-5">
+                <h3 class="mb-4"><i class="bi bi-clock-history text-gradient me-2"></i> Past Employment History</h3>
+                {% if helper.experience_history.all() %}
+                    <div class="d-flex flex-column gap-3">
+                        {% for exp in helper.experience_history.all() %}
+                            <div class="p-3 border border-secondary border-opacity-10 rounded-3" style="background: rgba(255,255,255,0.01);">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h5 class="mb-0 text-light">{{ exp.employer_name }}</h5>
+                                    {% if exp.verification_status == 'verified' %}
+                                        <span class="badge bg-success bg-opacity-15 text-success border border-success border-opacity-30">Reference Verified</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary bg-opacity-15 text-secondary">Pending Check</span>
+                                    {% endif %}
+                                </div>
+                                <p class="text-secondary small mb-2">Duration: {{ exp.start_date }} to {{ exp.end_date or "Present" }}</p>
+                                <p class="text-light mb-0 small">{{ exp.role_description }}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-secondary mb-0 text-center py-4">No past work experience references uploaded.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Action panel / contact panel -->
+        <div class="col-lg-4">
+            <div class="glass-panel p-4 sticky-lg-top" style="top: 85px; z-index: 10;">
+                <h3 class="text-light mb-4">Actions</h3>
+                
+                {% if current_user.is_authenticated %}
+                    {% if current_user.role == 'employer' %}
+                        <!-- Shortlist toggles -->
+                        <form method="POST" action="{{ url_for('employer.toggle_shortlist', helper_id=helper.id) }}" class="mb-3">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            {% set shortlist_item = current_user.employer_profile.shortlists.filter_by(helper_id=helper.id).first() %}
+                            {% if shortlist_item %}
+                                <button type="submit" class="btn btn-danger w-100 py-2"><i class="bi bi-bookmark-dash"></i> Remove Shortlist</button>
+                            {% else %}
+                                <button type="submit" class="btn btn-neon w-100 py-2"><i class="bi bi-bookmark-plus"></i> Shortlist Helper</button>
+                            {% endif %}
+                        </form>
+                        
+                        <a href="{{ url_for('employer.leave_review', helper_id=helper.id) }}" class="btn btn-glass-outline w-100 mb-3">
+                            <i class="bi bi-star"></i> Leave Review / Rating
+                        </a>
+                        
+                        <a href="{{ url_for('employer.file_dispute', reported_user_id=helper.user_id) }}" class="btn btn-sm btn-outline-danger w-100 py-2">
+                            <i class="bi bi-exclamation-triangle"></i> Report Dispute / Complaint
+                        </a>
+                    {% elif current_user.role == 'helper' and current_user.helper_profile and current_user.helper_profile.id == helper.id %}
+                        <a href="{{ url_for('helper.setup_profile') }}" class="btn btn-neon w-100 py-2 mb-3">
+                            <i class="bi bi-pencil-square"></i> Edit Profile
+                        </a>
+                    {% else %}
+                        <p class="text-secondary small mb-0 text-center">Contact capabilities reserved for household employers.</p>
+                    {% endif %}
+                {% else %}
+                    <div class="text-center p-3 border border-secondary border-opacity-10 rounded" style="background: rgba(255,255,255,0.01);">
+                        <i class="bi bi-lock-fill text-gradient display-6 mb-2 d-block"></i>
+                        <p class="text-secondary small mb-3">Sign in as an Employer to shortlist or initiate background verification audits.</p>
+                        <a href="{{ url_for('auth.login') }}" class="btn btn-sm btn-neon w-100">Log In</a>
+                    </div>
+                {% endif %}
+
+                <hr class="border-secondary border-opacity-25 my-4">
+                <div class="text-secondary small">
+                    <p class="mb-1"><i class="bi bi-shield-fill-check text-warning me-1"></i> Verified Badge denotes approved Aadhaar and PCC uploads.</p>
+                    <p class="mb-0"><i class="bi bi-geo-alt-fill text-danger me-1"></i> Proximity calculation matches coordinates to minimize transit times.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

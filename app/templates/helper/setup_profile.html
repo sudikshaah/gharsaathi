@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5 animate-fade-up">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="glass-panel p-5">
+                <h2 class="mb-4 text-gradient">
+                    {% if is_edit %}Edit Helper Profile{% else %}Setup Helper Profile{% endif %}
+                </h2>
+                <p class="text-secondary mb-4">Complete your profile to let household employers near you find and offer job interviews.</p>
+                
+                <form method="POST" action="">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label text-secondary fw-semibold">{{ form.full_name.label }}</label>
+                            {{ form.full_name(class="form-control glass-input", placeholder="Your Full Name") }}
+                            {% for error in form.full_name.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label text-secondary fw-semibold">{{ form.age.label }}</label>
+                            {{ form.age(class="form-control glass-input") }}
+                            {% for error in form.age.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label text-secondary fw-semibold">{{ form.gender.label }}</label>
+                            {{ form.gender(class="form-select glass-input") }}
+                            {% for error in form.gender.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label text-secondary fw-semibold">{{ form.religion.label }}</label>
+                            {{ form.religion(class="form-control glass-input", placeholder="e.g. Hindu, Christian") }}
+                            {% for error in form.religion.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-secondary fw-semibold">{{ form.languages_spoken.label }}</label>
+                            {{ form.languages_spoken(class="form-control glass-input", placeholder="e.g. Nepali, Hindi, English") }}
+                            {% for error in form.languages_spoken.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label text-secondary fw-semibold">{{ form.experience_years.label }}</label>
+                            {{ form.experience_years(class="form-control glass-input") }}
+                            {% for error in form.experience_years.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label text-secondary fw-semibold">{{ form.expected_salary.label }}</label>
+                            {{ form.expected_salary(class="form-control glass-input", placeholder="Rs. per month") }}
+                            {% for error in form.expected_salary.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label text-secondary fw-semibold">{{ form.work_type.label }}</label>
+                            {{ form.work_type(class="form-select glass-input") }}
+                            {% for error in form.work_type.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <label class="form-label text-secondary fw-semibold">{{ form.location_pincode.label }}</label>
+                            {{ form.location_pincode(class="form-control glass-input", placeholder="110001") }}
+                            {% for error in form.location_pincode.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label text-secondary fw-semibold">{{ form.latitude.label }}</label>
+                            {{ form.latitude(class="form-control glass-input", placeholder="e.g. 28.6139") }}
+                            {% for error in form.latitude.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label text-secondary fw-semibold">{{ form.longitude.label }}</label>
+                            {{ form.longitude(class="form-control glass-input", placeholder="e.g. 77.2090") }}
+                            {% for error in form.longitude.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Skills Checkboxes section -->
+                    <div class="mb-4">
+                        <label class="form-label text-secondary fw-semibold d-block mb-3">Skills Offered</label>
+                        {% if skills_list %}
+                            <div class="row g-3">
+                                {% for skill in skills_list %}
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="skills" value="{{ skill.id }}" id="skill_{{ skill.id }}"
+                                                {% if skill.id in selected_skills %}checked{% endif %}>
+                                            <label class="form-check-label text-light" for="skill_{{ skill.id }}">
+                                                {{ skill.skill_name }} <span class="text-secondary small">({{ skill.category }})</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p class="text-secondary small">No master skills loaded. Default capabilities will be associated based on verification.</p>
+                        {% endif %}
+                    </div>
+                    
+                    <button type="submit" class="btn btn-neon py-2 px-4">
+                        <i class="bi bi-save"></i> Save Profile Details
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

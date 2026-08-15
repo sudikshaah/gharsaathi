@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section text-center py-5 position-relative" style="background: linear-gradient(135deg, #081C2D 0%, #1F7A63 100%); border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; margin-top: -24px;">
+    <div class="container position-relative py-5">
+        <h1 class="display-3 fw-bold mb-3 text-light">
+            Verified Domestic Help<br><span class="text-gradient" style="background: linear-gradient(135deg, #10b981, #34d399); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">You Can Trust</span>
+        </h1>
+        <p class="fs-5 text-secondary max-width-600 mx-auto mb-5" style="color: #9AA3A8 !important; max-width: 650px;">
+            Connecting households with verified, hyper-local domestic helpers. Safe, direct, and powered by smart compatibility matching.
+        </p>
+
+        <!-- Search Widget Card (Mockup Style) -->
+        <div class="glass-panel p-4 mx-auto text-start mt-4" style="max-width: 850px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25); margin-bottom: -100px; position: relative; z-index: 10;">
+            <!-- Category Tabs -->
+            <div class="d-flex flex-wrap gap-2 mb-3 pb-2 border-bottom border-secondary border-opacity-15">
+                <button type="button" class="btn btn-sm btn-neon tab-btn" data-category="cook" onclick="selectTab(this, 'cook')">
+                    <i class="bi bi-egg-fried"></i> Cooks
+                </button>
+                <button type="button" class="btn btn-sm btn-glass-outline tab-btn" data-category="maid" onclick="selectTab(this, 'maid')">
+                    <i class="bi bi-house-door"></i> Maids
+                </button>
+                <button type="button" class="btn btn-sm btn-glass-outline tab-btn" data-category="driver" onclick="selectTab(this, 'driver')">
+                    <i class="bi bi-car-front"></i> Drivers
+                </button>
+                <button type="button" class="btn btn-sm btn-glass-outline tab-btn" data-category="babysitter" onclick="selectTab(this, 'babysitter')">
+                    <i class="bi bi-baby"></i> Nannies
+                </button>
+                <button type="button" class="btn btn-sm btn-glass-outline tab-btn" data-category="caregiver" onclick="selectTab(this, 'caregiver')">
+                    <i class="bi bi-heart-pulse"></i> Caregivers
+                </button>
+            </div>
+
+            <!-- Search Form -->
+            <form method="GET" action="{{ url_for('public.search_helpers') }}">
+                <input type="hidden" name="category" id="search-category" value="cook">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label text-secondary small fw-semibold">Pincode</label>
+                        <input type="text" name="pincode" class="form-control glass-input" placeholder="e.g. 110070" style="padding: 10px 14px !important;">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label text-secondary small fw-semibold">Min Experience (Years)</label>
+                        <input type="number" name="min_experience" class="form-control glass-input" placeholder="Years of experience" style="padding: 10px 14px !important;">
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end">
+                        <button type="submit" class="btn btn-neon w-100 py-3" style="font-size: 1rem; border-radius: 10px;">
+                            <i class="bi bi-search"></i> Search Helpers
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Spacer to compensate for overlapping Search widget -->
+<div style="height: 100px;"></div>
+
+<!-- Main Landing Page Content (Soft White Background Section) -->
+<div class="container py-5">
+    <!-- Statistics Panel -->
+    <div class="row g-4 mb-5 text-center">
+        <div class="col-md-4">
+            <div class="glass-panel p-4 h-100">
+                <div class="text-gradient display-5 fw-bold mb-2">{{ total_helpers }}</div>
+                <div class="text-secondary fw-semibold uppercase tracking-wider small">Registered Helpers</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="glass-panel p-4 h-100">
+                <div class="text-gradient display-5 fw-bold mb-2">{{ verified_helpers }}</div>
+                <div class="text-secondary fw-semibold uppercase tracking-wider small">Background-Checked & Verified</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="glass-panel p-4 h-100">
+                <div class="text-gradient display-5 fw-bold mb-2">{{ total_jobs }}</div>
+                <div class="text-secondary fw-semibold uppercase tracking-wider small">Active Households Hiring</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Why GharSaathi Section -->
+    <div class="row g-5 align-items-center py-5">
+        <div class="col-lg-6">
+            <h2 class="h1 mb-4">How <span class="text-gradient">GharSaathi</span> Works</h2>
+            <div class="d-flex mb-4">
+                <div class="me-4">
+                    <span class="d-flex align-items-center justify-content-center bg-success bg-opacity-10 border border-success border-opacity-30 rounded-circle" style="width: 48px; height: 48px;">
+                        <i class="bi bi-geo-alt text-success fs-4"></i>
+                    </span>
+                </div>
+                <div>
+                    <h4 class="mb-1 text-primary">Hyper-Local Proximity</h4>
+                    <p class="text-secondary">We focus on connecting you with workers nearby. Reduce long commutes, ensure punctuality, and help domestic staff work within comfortable walking distance.</p>
+                </div>
+            </div>
+            <div class="d-flex mb-4">
+                <div class="me-4">
+                    <span class="d-flex align-items-center justify-content-center bg-success bg-opacity-10 border border-success border-opacity-30 rounded-circle" style="width: 48px; height: 48px;">
+                        <i class="bi bi-shield-check text-success fs-4"></i>
+                    </span>
+                </div>
+                <div>
+                    <h4 class="mb-1 text-primary">Rigorous Security Audit</h4>
+                    <p class="text-secondary">We review Aadhaar ID credentials and verify Police Clearance Certificates (PCC) before helpers receive verification badges to build mutual trust.</p>
+                </div>
+            </div>
+            <div class="d-flex">
+                <div class="me-4">
+                    <span class="d-flex align-items-center justify-content-center bg-success bg-opacity-10 border border-success border-opacity-30 rounded-circle" style="width: 48px; height: 48px;">
+                        <i class="bi bi-lightning text-success fs-4"></i>
+                    </span>
+                </div>
+                <div>
+                    <h4 class="mb-1 text-primary">Intelligent Match Engine</h4>
+                    <p class="text-secondary">Our system evaluates skill matching, salary expectations, commute distance, and experience requirements to suggest the best candidates for your home.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6">
+            <div class="glass-panel p-5">
+                <h3 class="mb-4 text-center text-primary">Featured Verified Candidates</h3>
+                {% if featured_helpers %}
+                    <div class="d-flex flex-column gap-3">
+                        {% for helper in featured_helpers %}
+                            <div class="d-flex align-items-center justify-content-between p-3 border border-secondary border-opacity-10 rounded-3" style="background: rgba(8, 28, 45, 0.02);">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-person-circle fs-2 text-gradient me-3"></i>
+                                    <div>
+                                        <h5 class="mb-0 text-primary">{{ helper.full_name }}</h5>
+                                        <span class="text-secondary small">{{ helper.experience_years }} Yrs Exp &bull; Pincode {{ helper.location_pincode }}</span>
+                                    </div>
+                                </div>
+                                <span class="badge-verified"><i class="bi bi-shield-fill-check"></i> Verified</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-4 text-secondary">
+                        <i class="bi bi-person-exclamation fs-1 mb-2"></i>
+                        <p class="mb-0">No verified profiles currently listed.</p>
+                    </div>
+                {% endif %}
+                <div class="text-center mt-4">
+                    <a href="{{ url_for('public.search_helpers') }}" class="btn btn-glass-outline w-100">Browse Helpers Directory</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function selectTab(btn, category) {
+    // Reset all tab buttons
+    const buttons = document.querySelectorAll('.tab-btn');
+    buttons.forEach(b => {
+        b.classList.remove('btn-neon');
+        b.classList.add('btn-glass-outline');
+    });
+    
+    // Set active button
+    btn.classList.remove('btn-glass-outline');
+    btn.classList.add('btn-neon');
+    
+    // Update hidden input
+    document.getElementById('search-category').value = category;
+}
+</script>
+{% endblock %}

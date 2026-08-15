@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5 d-flex justify-content-center align-items-center animate-fade-up" style="min-height: 70vh;">
+    <div class="col-md-6">
+        <div class="glass-panel p-5">
+            <h2 class="mb-4 text-gradient"><i class="bi bi-star me-2"></i> Review {{ helper.full_name }}</h2>
+            <p class="text-secondary mb-4">Your rating helps maintain high trust in the platform. Be honest and constructive.</p>
+            
+            <form method="POST" action="">
+                {{ form.hidden_tag() }}
+                
+                <div class="mb-3">
+                    <label class="form-label text-secondary fw-semibold">{{ form.rating.label }}</label>
+                    {{ form.rating(class="form-control glass-input", type="number", min="1", max="5", placeholder="Enter rating (1 to 5)") }}
+                    {% for error in form.rating.errors %}
+                        <div class="text-danger small mt-1">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label text-secondary fw-semibold">{{ form.comment.label }}</label>
+                    {{ form.comment(class="form-control glass-input", rows=4, placeholder="Write your review comments here...") }}
+                    {% for error in form.comment.errors %}
+                        <div class="text-danger small mt-1">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-neon py-2 px-4">Submit Review</button>
+                    <a href="{{ url_for('public.helper_detail', helper_id=helper.id) }}" class="btn btn-glass-outline py-2 px-4">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

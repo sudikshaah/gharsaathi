@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5 animate-fade-up">
+    <!-- Back button -->
+    <div class="mb-4">
+        <a href="{{ url_for('public.search_jobs') }}" class="btn btn-sm btn-glass-outline">
+            <i class="bi bi-arrow-left"></i> Back to Jobs
+        </a>
+    </div>
+
+    <div class="row g-4">
+        <!-- Main job details Card -->
+        <div class="col-lg-8">
+            <div class="glass-panel p-5 mb-4">
+                <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+                    <div>
+                        <h1 class="mb-1 text-light">{{ job.title }}</h1>
+                        <p class="text-secondary mb-0">Posted by {{ job.employer.family_name }} Family &bull; Pincode {{ job.address_pincode }}</p>
+                    </div>
+                    <span class="badge bg-info bg-opacity-15 text-info border border-info border-opacity-30 px-3 py-2" style="font-size: 0.9rem;">
+                        {{ job.category.replace('_', ' ').upper() }}
+                    </span>
+                </div>
+
+                <hr class="border-secondary border-opacity-25 my-4">
+
+                <h4 class="text-light mb-3">Job Requirements</h4>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="p-3 rounded border border-secondary border-opacity-10" style="background: rgba(255,255,255,0.01)">
+                            <small class="text-secondary d-block">Monthly Salary</small>
+                            <strong class="fs-5 text-gradient">Rs. {{ job.salary_offered }} / month</strong>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 rounded border border-secondary border-opacity-10" style="background: rgba(255,255,255,0.01)">
+                            <small class="text-secondary d-block">Experience Required</small>
+                            <strong class="fs-5 text-light">{{ job.experience_required_years }}+ Years</strong>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 rounded border border-secondary border-opacity-10" style="background: rgba(255,255,255,0.01)">
+                            <small class="text-secondary d-block">Shift Hours</small>
+                            <strong class="fs-5 text-light">
+                                {% if job.working_hours_start and job.working_hours_end %}
+                                    {{ job.working_hours_start.strftime('%I:%M %p') }} to {{ job.working_hours_end.strftime('%I:%M %p') }}
+                                {% else %}
+                                    Flexible shifts
+                                {% endif %}
+                            </strong>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 rounded border border-secondary border-opacity-10" style="background: rgba(255,255,255,0.01)">
+                            <small class="text-secondary d-block">Gender Preference</small>
+                            <strong class="fs-5 text-light">{{ job.gender_preference.replace('_', ' ').title() }}</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 class="text-light mb-3">Accommodations & Benefits</h4>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="p-3 rounded border border-secondary border-opacity-10" style="background: rgba(255,255,255,0.01)">
+                            <small class="text-secondary d-block">Accommodation Provided</small>
+                            <strong class="fs-6 text-light">
+                                {% if job.accommodation_provided %}Yes, stay-in accommodation{% else %}No, live-out only{% endif %}
+                            </strong>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 rounded border border-secondary border-opacity-10" style="background: rgba(255,255,255,0.01)">
+                            <small class="text-secondary d-block">Food Provided</small>
+                            <strong class="fs-6 text-light">
+                                {% if job.food_provided %}Yes, daily meals included{% else %}No meals provided{% endif %}
+                            </strong>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 class="text-light mb-3">Job Description / Responsibilities</h4>
+                <p class="text-light mb-4" style="line-height: 1.6;">
+                    {{ job.description or "No description provided." }}
+                </p>
+
+                <h4 class="text-light mb-3">Weekly Off Day</h4>
+                <p class="text-light mb-0">{{ job.weekly_off_day or "No weekly off day specified." }}</p>
+            </div>
+        </div>
+
+        <!-- Action Panel -->
+        <div class="col-lg-4">
+            <div class="glass-panel p-4 sticky-lg-top" style="top: 85px; z-index: 10;">
+                <h3 class="text-light mb-4">Status & Actions</h3>
+                
+                <div class="mb-4">
+                    <small class="text-secondary d-block mb-1">Listing Status</small>
+                    {% if job.status == 'open' %}
+                        <span class="badge bg-success bg-opacity-15 text-success border border-success border-opacity-30 px-3 py-2">Active Open</span>
+                    {% elif job.status == 'paused' %}
+                        <span class="badge bg-warning bg-opacity-15 text-warning border border-warning border-opacity-30 px-3 py-2">Paused</span>
+                    {% else %}
+                        <span class="badge bg-danger bg-opacity-15 text-danger border border-danger border-opacity-30 px-3 py-2">Closed</span>
+                    {% endif %}
+                </div>
+
+                {% if current_user.is_authenticated %}
+                    {% if current_user.role == 'helper' %}
+                        <!-- Save/Bookmark toggle -->
+                        <form method="POST" action="{{ url_for('helper.toggle_save_job', job_id=job.id) }}" class="mb-3">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            {% set saved_item = current_user.helper_profile.saved_jobs.filter_by(job_id=job.id).first() %}
+                            {% if saved_item %}
+                                <button type="submit" class="btn btn-danger w-100 py-2"><i class="bi bi-bookmark-dash"></i> Unsave Job</button>
+                            {% else %}
+                                <button type="submit" class="btn btn-glass-outline w-100 py-2"><i class="bi bi-bookmark-plus"></i> Save / Bookmark Job</button>
+                            {% endif %}
+                        </form>
+                        
+                        <!-- Apply to job -->
+                        <form method="POST" action="{{ url_for('helper.apply_job', job_id=job.id) }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            {% set applied_item = current_user.helper_profile.applications.filter_by(job_id=job.id).first() %}
+                            {% if applied_item %}
+                                <button type="button" class="btn btn-success w-100 py-2" disabled><i class="bi bi-check-circle"></i> Applied ({{ applied_item.status.title() }})</button>
+                            {% else %}
+                                <button type="submit" class="btn btn-neon w-100 py-2" {% if job.status != 'open' %}disabled{% endif %}><i class="bi bi-lightning-fill"></i> Apply Now</button>
+                            {% endif %}
+                        </form>
+                    {% elif current_user.role == 'employer' and current_user.employer_profile and current_user.employer_profile.id == job.employer_id %}
+                        <a href="{{ url_for('employer.dashboard') }}" class="btn btn-neon w-100 py-2">
+                            <i class="bi bi-speedometer2"></i> Manage Job Applicants
+                        </a>
+                    {% endif %}
+                {% else %}
+                    <div class="text-center p-3 border border-secondary border-opacity-10 rounded" style="background: rgba(255,255,255,0.01);">
+                        <i class="bi bi-lock-fill text-gradient display-6 mb-2 d-block"></i>
+                        <p class="text-secondary small mb-3">Sign in as a Helper to apply or bookmark this listing.</p>
+                        <a href="{{ url_for('auth.login') }}" class="btn btn-sm btn-neon w-100">Log In</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

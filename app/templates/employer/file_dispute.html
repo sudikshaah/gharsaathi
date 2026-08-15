@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5 d-flex justify-content-center align-items-center animate-fade-up" style="min-height: 70vh;">
+    <div class="col-md-6">
+        <div class="glass-panel p-5">
+            <h2 class="mb-4 text-gradient text-danger"><i class="bi bi-exclamation-triangle me-2"></i> Report Dispute against {{ helper.full_name }}</h2>
+            <p class="text-secondary mb-4">Provide details about the issue. Platform administrators will investigate this claim.</p>
+            
+            <form method="POST" action="">
+                {{ form.hidden_tag() }}
+                
+                <div class="mb-3">
+                    <label class="form-label text-secondary fw-semibold">{{ form.category.label }}</label>
+                    {{ form.category(class="form-select glass-input") }}
+                    {% for error in form.category.errors %}
+                        <div class="text-danger small mt-1">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label text-secondary fw-semibold">{{ form.description.label }}</label>
+                    {{ form.description(class="form-control glass-input", rows=5, placeholder="Detail the events here...") }}
+                    {% for error in form.description.errors %}
+                        <div class="text-danger small mt-1">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-danger py-2 px-4">Submit Complaint</button>
+                    <a href="{{ url_for('employer.dashboard') }}" class="btn btn-glass-outline py-2 px-4">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

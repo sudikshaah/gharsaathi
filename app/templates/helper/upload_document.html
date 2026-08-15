@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5 d-flex justify-content-center align-items-center animate-fade-up" style="min-height: 70vh;">
+    <div class="col-md-6">
+        <div class="glass-panel p-5">
+            <h2 class="mb-4 text-gradient"><i class="bi bi-file-earmark-arrow-up me-2"></i> Upload Verification Document</h2>
+            <p class="text-secondary mb-4">Select a document type and upload a scanned image or PDF. Administrative review usually takes 24 hours.</p>
+            
+            <form method="POST" action="" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+                
+                <div class="mb-3">
+                    <label class="form-label text-secondary fw-semibold">{{ form.document_type.label }}</label>
+                    {{ form.document_type(class="form-select glass-input") }}
+                    {% for error in form.document_type.errors %}
+                        <div class="text-danger small mt-1">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label text-secondary fw-semibold">{{ form.document_file.label }}</label>
+                    {{ form.document_file(class="form-control glass-input") }}
+                    {% for error in form.document_file.errors %}
+                        <div class="text-danger small mt-1">{{ error }}</div>
+                    {% endfor %}
+                    <span class="text-secondary small mt-1 d-block">Allowed types: PDF, PNG, JPG, JPEG (Max size: 50MB)</span>
+                </div>
+                
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-neon py-2 px-4">Upload Document</button>
+                    <a href="{{ url_for('helper.dashboard') }}" class="btn btn-glass-outline py-2 px-4">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

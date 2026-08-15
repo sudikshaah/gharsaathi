@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-4 animate-fade-up">
+    <h2 class="mb-4 text-gradient"><i class="bi bi-briefcase me-2"></i> Browse Household Job Openings</h2>
+
+    <div class="row g-4">
+        <!-- Search Filters Panel -->
+        <div class="col-lg-3">
+            <div class="glass-panel p-4 sticky-lg-top" style="top: 85px; z-index: 10;">
+                <h4 class="mb-3 text-light">Filter Jobs</h4>
+                
+                <form method="GET" action="{{ url_for('public.search_jobs') }}">
+                    <div class="mb-3">
+                        <label class="form-label text-secondary small fw-semibold">Job Category</label>
+                        <select name="category" class="form-select glass-input">
+                            <option value="">All Categories</option>
+                            {% for cat in categories %}
+                                <option value="{{ cat }}" {% if selected_category == cat %}selected{% endif %}>{{ cat.title() }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label text-secondary small fw-semibold">Pincode</label>
+                        <input type="text" name="pincode" class="form-control glass-input" placeholder="e.g. 110001" value="{{ selected_pincode }}">
+                    </div>
+
+                    <button type="submit" class="btn btn-neon w-100 mb-2">Apply Filters</button>
+                    <a href="{{ url_for('public.search_jobs') }}" class="btn btn-glass-outline w-100">Clear Filters</a>
+                </form>
+            </div>
+        </div>
+
+        <!-- Job Cards Grid -->
+        <div class="col-lg-9">
+            {% if jobs %}
+                <div class="row g-4">
+                    {% for job in jobs %}
+                        <div class="col-md-6">
+                            <div class="glass-panel p-4 h-100 d-flex flex-column justify-content-between">
+                                <div>
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <div>
+                                            <h4 class="mb-0 text-light">{{ job.title }}</h4>
+                                            <span class="text-secondary small">Posted by {{ job.employer.family_name }}</span>
+                                        </div>
+                                        <span class="badge bg-info bg-opacity-15 text-info border border-info border-opacity-30" style="font-size: 0.75rem;">
+                                            {{ job.category.replace('_', ' ').title() }}
+                                        </span>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <p class="text-light mb-2 line-clamp-3" style="font-size: 0.9rem;">
+                                            {{ job.description or "No description provided." }}
+                                        </p>
+                                    </div>
+
+                                    <div class="row g-2 text-secondary small mb-4">
+                                        <div class="col-6"><i class="bi bi-geo-alt me-1 text-danger"></i> Pincode {{ job.address_pincode }}</div>
+                                        <div class="col-6"><i class="bi bi-award me-1 text-success"></i> {{ job.experience_required_years }}+ Yrs Exp Req</div>
+                                        <div class="col-6"><i class="bi bi-gender-ambiguous me-1 text-warning"></i> Pref: {{ job.gender_preference.replace('_', ' ').title() }}</div>
+                                        <div class="col-6"><i class="bi bi-clock me-1 text-info"></i> Shift hours details</div>
+                                    </div>
+                                </div>
+
+                                <div class="border-top border-secondary border-opacity-10 pt-3 d-flex justify-content-between align-items-center">
+                                    <span class="fw-bold text-gradient">Rs. {{ job.salary_offered }}/mo</span>
+                                    <a href="{{ url_for('public.job_detail', job_id=job.id) }}" class="btn btn-sm btn-neon">Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="glass-panel p-5 text-center text-secondary">
+                    <i class="bi bi-folder-x display-4 mb-3"></i>
+                    <h3>No active job openings found</h3>
+                    <p class="mb-0">Try widening your search terms or checking back later.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

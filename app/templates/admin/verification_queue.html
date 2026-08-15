@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-4 animate-fade-up">
+    <!-- Back to Admin Dashboard -->
+    <div class="mb-4">
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-sm btn-glass-outline">
+            <i class="bi bi-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <div class="glass-panel p-5">
+        <h2 class="mb-4 text-gradient"><i class="bi bi-shield-check me-2"></i> Helper Verification Queue (OCR Human-in-the-Loop)</h2>
+        <p class="text-secondary mb-4">Review OCR extracted document data side-by-side with original helper profile details to establish document authenticity.</p>
+
+        {% if pending_docs %}
+            <div class="table-responsive">
+                <table class="table table-glass align-middle">
+                    <thead>
+                        <tr>
+                            <th>Helper Profile Info</th>
+                            <th>Document Type</th>
+                            <th>OCR Extracted Data</th>
+                            <th>Document Link</th>
+                            <th>Decision Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for doc in pending_docs %}
+                            <tr>
+                                <td>
+                                    <strong>{{ doc.user.helper_profile.full_name if doc.user.helper_profile else "User " ~ doc.user_id }}</strong><br>
+                                    <span class="text-secondary small">Age: {{ doc.user.helper_profile.age if doc.user.helper_profile else "N/A" }}</span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info bg-opacity-15 text-info border border-info border-opacity-30">
+                                        {{ doc.document_type.replace('_', ' ').upper() }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="p-2 rounded border border-secondary border-opacity-10 small" style="background: rgba(255,255,255,0.02); min-width: 200px;">
+                                        <div><span class="text-secondary">Name:</span> <strong class="text-light">{{ doc.ocr_name or "N/A" }}</strong></div>
+                                        <div><span class="text-secondary">Doc Number:</span> <strong class="text-light">{{ doc.ocr_document_number or "N/A" }}</strong></div>
+                                        <div><span class="text-secondary">DOB:</span> <strong class="text-light">{{ doc.ocr_dob or "N/A" }}</strong></div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <a href="{{ doc.document_path }}" target="_blank" class="btn btn-sm btn-glass-outline py-1">
+                                        <i class="bi bi-file-earmark-text"></i> View Scanned Doc
+                                    </a>
+                                </td>
+                                <td>
+                                    <!-- Decision actions form -->
+                                    <div class="d-flex flex-column gap-2">
+                                        <!-- Approve form with remarks -->
+                                        <form method="POST" action="{{ url_for('admin.approve_doc', doc_id=doc.id) }}" class="p-2 border border-secondary border-opacity-10 rounded" style="background: rgba(255,255,255,0.01); max-width: 250px;">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                            <input type="text" name="remarks" class="form-control form-control-sm glass-input mb-2" placeholder="Approval remarks (Optional)...">
+                                            <button type="submit" class="btn btn-sm btn-success w-100 py-1">Approve Verification</button>
+                                        </form>
+                                        
+                                        <!-- Reject form with reason -->
+                                        <form method="POST" action="{{ url_for('admin.reject_doc', doc_id=doc.id) }}" class="p-2 border border-secondary border-opacity-10 rounded" style="background: rgba(255,255,255,0.01); max-width: 250px;">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                            <input type="text" name="reason" class="form-control form-control-sm glass-input mb-2" placeholder="Rejection reason..." required>
+                                            <button type="submit" class="btn btn-sm btn-danger w-100 py-1">Reject Request</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-5 text-secondary">
+                <i class="bi bi-check-all text-gradient display-4 mb-2"></i>
+                <p class="mb-0 fs-5">All verification requests are cleared. Nice job!</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

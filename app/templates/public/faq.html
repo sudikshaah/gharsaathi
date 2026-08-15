@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5 animate-fade-up">
+    <div class="row justify-content-center">
+        <div class="col-md-9">
+            <div class="glass-panel p-5">
+                <h1 class="mb-4 text-center text-gradient"><i class="bi bi-question-circle me-2"></i> Frequently Asked Questions</h1>
+                <p class="text-secondary text-center mb-5">Everything you need to know about safety, matching, and work verification on GharSaathi.</p>
+                
+                <div class="accordion accordion-flush" id="faqAccordion">
+                    <!-- Q1 -->
+                    <div class="accordion-item bg-transparent border-bottom border-secondary border-opacity-10 py-3">
+                        <h2 class="accordion-header bg-transparent" id="faq-h1">
+                            <button class="accordion-button bg-transparent text-light fw-bold fs-5 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-c1">
+                                How does GharSaathi verify domestic helper profiles?
+                            </button>
+                        </h2>
+                        <div id="faq-c1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body text-secondary">
+                                Domestic helpers upload identification documents (Aadhaar cards) and Police Clearance Certificates (PCC). Our administrators audit these documents manually in our admin queue. Once approved, helper profiles receive verified badges which award them matching priority scores.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Q2 -->
+                    <div class="accordion-item bg-transparent border-bottom border-secondary border-opacity-10 py-3">
+                        <h2 class="accordion-header" id="faq-h2">
+                            <button class="accordion-button bg-transparent text-light fw-bold fs-5 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-c2">
+                                How is the match score calculated?
+                            </button>
+                        </h2>
+                        <div id="faq-c2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body text-secondary">
+                                Our match engine calculates compatibility scores dynamically based on: Proximity distance (30%), salary expectations alignment (25%), skills intersections (20%), minimum experience requirement checks (15%), and helper document verification status bonus (10%).
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Q3 -->
+                    <div class="accordion-item bg-transparent border-bottom border-secondary border-opacity-10 py-3">
+                        <h2 class="accordion-header" id="faq-h3">
+                            <button class="accordion-button bg-transparent text-light fw-bold fs-5 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-c3">
+                                What is proximity distance matching?
+                            </button>
+                        </h2>
+                        <div id="faq-c3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body text-secondary">
+                                Proximity matching calculates the great-circle distance between coordinates of the household employer and the worker. Compatible matches receive a full score if the distance is under 1 km, which decreases linearly to 0% at 5 km or more to encourage hyper-local, walkable employment.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Q4 -->
+                    <div class="accordion-item bg-transparent border-bottom border-secondary border-opacity-10 py-3">
+                        <h2 class="accordion-header" id="faq-h4">
+                            <button class="accordion-button bg-transparent text-light fw-bold fs-5 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-c4">
+                                How does the dispute and complaints system work?
+                            </button>
+                        </h2>
+                        <div id="faq-c4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body text-secondary">
+                                Users can report disputes (abuse, continuous absences, theft, or payment delays) against profiles. Tickets are routed to our administrative complaints dashboard where administrators investigate and can suspend user accounts if terms of service are breached.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

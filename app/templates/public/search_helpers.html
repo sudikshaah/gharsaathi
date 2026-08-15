@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-4 animate-fade-up">
+    <h2 class="mb-4 text-gradient"><i class="bi bi-search me-2"></i> Browse Domestic Helpers</h2>
+
+    <div class="row g-4">
+        <!-- Search Filters Panel -->
+        <div class="col-lg-3">
+            <div class="glass-panel p-4 sticky-lg-top" style="top: 85px; z-index: 10;">
+                <h4 class="mb-3 text-light">Filter Candidates</h4>
+                
+                <form method="GET" action="{{ url_for('public.search_helpers') }}">
+                    <div class="mb-3">
+                        <label class="form-label text-secondary small fw-semibold">Job Category</label>
+                        <select name="category" class="form-select glass-input">
+                            <option value="">All Categories</option>
+                            {% for cat in categories %}
+                                <option value="{{ cat }}" {% if selected_category == cat %}selected{% endif %}>{{ cat.title() }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-secondary small fw-semibold">Pincode</label>
+                        <input type="text" name="pincode" class="form-control glass-input" placeholder="e.g. 110001" value="{{ selected_pincode }}">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label text-secondary small fw-semibold">Min Experience (Years)</label>
+                        <input type="number" name="min_experience" class="form-control glass-input" placeholder="e.g. 2" value="{{ selected_exp or '' }}">
+                    </div>
+
+                    <button type="submit" class="btn btn-neon w-100 mb-2">Apply Filters</button>
+                    <a href="{{ url_for('public.search_helpers') }}" class="btn btn-glass-outline w-100">Clear Filters</a>
+                </form>
+            </div>
+        </div>
+
+        <!-- Helper Listings Cards Grid -->
+        <div class="col-lg-9">
+            {% if helpers %}
+                <div class="row g-4">
+                    {% for helper in helpers %}
+                        <div class="col-md-6">
+                            <div class="glass-panel p-4 h-100 d-flex flex-column justify-content-between">
+                                <div>
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <div class="d-flex align-items-center">
+                                            <i class="bi bi-person-circle display-6 text-gradient me-3"></i>
+                                            <div>
+                                                <h4 class="mb-0 text-light">{{ helper.full_name }}</h4>
+                                                <span class="text-secondary small">{{ helper.gender.title() }} &bull; {{ helper.age }} Yrs Old</span>
+                                            </div>
+                                        </div>
+                                        {% if helper.is_police_verified %}
+                                            <span class="badge-verified"><i class="bi bi-shield-fill-check"></i> Verified</span>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <p class="mb-1 text-secondary small">Skills offered:</p>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            {% for skill in helper.skills %}
+                                                <span class="badge bg-secondary bg-opacity-25 text-light" style="font-size: 0.75rem;">{{ skill.skill_name }}</span>
+                                            {% else %}
+                                                <span class="text-secondary small">General worker</span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <div class="row g-2 text-secondary small">
+                                            <div class="col-6"><i class="bi bi-clock me-1 text-info"></i> {{ helper.work_type.replace('_', '-').title() }}</div>
+                                            <div class="col-6"><i class="bi bi-star-fill me-1 text-warning"></i> {{ helper.overall_rating }} / 5.0</div>
+                                            <div class="col-6"><i class="bi bi-award me-1 text-success"></i> {{ helper.experience_years }} Yrs Exp</div>
+                                            <div class="col-6"><i class="bi bi-geo-alt me-1 text-danger"></i> Pincode {{ helper.location_pincode }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="border-top border-secondary border-opacity-10 pt-3 d-flex justify-content-between align-items-center">
+                                    <span class="fw-bold text-gradient">Rs. {{ helper.expected_salary }}/mo</span>
+                                    <a href="{{ url_for('public.helper_detail', helper_id=helper.id) }}" class="btn btn-sm btn-neon">View Profile</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="glass-panel p-5 text-center text-secondary">
+                    <i class="bi bi-people-fill display-4 mb-3"></i>
+                    <h3>No domestic helpers found</h3>
+                    <p class="mb-0">Try clearing filters or checking a different category/pincode range.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

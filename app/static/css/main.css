@@ -1,0 +1,342 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+    --bg-dark: #081C2D;           /* Navy Blue */
+    --bg-light: #F5F7FA;          /* Soft White */
+    --primary-neon: #1F7A63;      /* Emerald Green */
+    --primary-neon-rgb: 31, 122, 99;
+    --secondary-neon: #10b981;    /* Bright Mint Emerald */
+    --secondary-neon-rgb: 16, 185, 129;
+    --accent-gold: #d97706;       /* High Contrast Amber */
+    --danger-red: #ef4444;
+    --text-primary: #081C2D;      /* Navy text by default */
+    --text-secondary: #5A6A75;    /* Muted navy/gray */
+    --border-glass: rgba(8, 28, 45, 0.08);
+    --card-shadow: 0 10px 30px rgba(8, 28, 45, 0.04);
+    --font-outfit: 'Outfit', sans-serif;
+}
+
+body {
+    background-color: var(--bg-light);
+    color: var(--text-primary);
+    font-family: var(--font-outfit);
+    min-height: 100vh;
+    margin: 0;
+    overflow-x: hidden;
+}
+
+/* Dark mode scopes for headers, footers and heroes */
+.custom-navbar, .hero-section, footer, .dark-panel {
+    --text-primary: #F5F7FA;
+    --text-secondary: #9AA3A8;    /* Cool Gray */
+    --border-glass: rgba(255, 255, 255, 0.1);
+}
+
+/* Glassmorphism Panel Utilities */
+.glass-panel {
+    background: #ffffff;
+    border: 1px solid var(--border-glass);
+    border-radius: 16px;
+    box-shadow: var(--card-shadow);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    color: var(--text-primary);
+}
+
+.glass-panel:hover {
+    border-color: rgba(31, 122, 99, 0.2);
+    box-shadow: 0 15px 35px rgba(8, 28, 45, 0.08);
+    transform: translateY(-2px);
+}
+
+/* Dark Panels override */
+.dark-panel, .hero-section .glass-panel {
+    background: rgba(8, 28, 45, 0.85) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    color: #F5F7FA !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25) !important;
+}
+.dark-panel:hover, .hero-section .glass-panel:hover {
+    border-color: rgba(16, 185, 129, 0.3) !important;
+    box-shadow: 0 15px 40px rgba(16, 185, 129, 0.15) !important;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.text-gradient {
+    background: linear-gradient(135deg, var(--primary-neon), var(--secondary-neon));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.text-muted-custom {
+    color: var(--text-secondary);
+}
+
+/* Nav & Footer */
+.custom-navbar {
+    background: #081C2D;
+    border-bottom: 1px solid var(--border-glass);
+    padding: 15px 0;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+}
+
+.custom-navbar .nav-link {
+    color: var(--text-secondary) !important;
+    font-weight: 500;
+    transition: color 0.15s ease;
+}
+.custom-navbar .nav-link:hover, .custom-navbar .nav-link.active {
+    color: var(--text-primary) !important;
+}
+
+/* Form Controls */
+.glass-input {
+    background: #ffffff !important;
+    border: 1px solid rgba(8, 28, 45, 0.12) !important;
+    color: #081C2D !important;
+    border-radius: 10px !important;
+    padding: 12px 16px !important;
+    transition: all 0.2s ease-in-out !important;
+}
+
+.glass-input:focus {
+    background: #ffffff !important;
+    border-color: var(--primary-neon) !important;
+    box-shadow: 0 0 12px rgba(31, 122, 99, 0.15) !important;
+    outline: none !important;
+}
+
+/* Fix visible dropdown options */
+.glass-input option {
+    background-color: #ffffff;
+    color: #081C2D;
+}
+
+/* Dark mode inputs override */
+.dark-panel .glass-input, .hero-section .glass-input {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #F5F7FA !important;
+}
+.dark-panel .glass-input:focus, .hero-section .glass-input:focus {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: var(--secondary-neon) !important;
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.3) !important;
+}
+.dark-panel .glass-input option, .hero-section .glass-input option {
+    background-color: #081C2D;
+    color: #F5F7FA;
+}
+
+/* Buttons */
+.btn-neon {
+    background: linear-gradient(135deg, var(--primary-neon), var(--secondary-neon));
+    color: #fff !important;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 24px;
+    font-weight: 600;
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(31, 122, 99, 0.3);
+}
+
+.btn-neon:hover {
+    transform: translateY(-1.5px);
+    box-shadow: 0 6px 20px rgba(31, 122, 99, 0.5);
+    filter: brightness(1.1);
+}
+
+.btn-glass-outline {
+    background: transparent;
+    border: 1.5px solid var(--border-glass);
+    color: var(--text-primary) !important;
+    border-radius: 10px;
+    padding: 10px 24px;
+    font-weight: 600;
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-glass-outline:hover {
+    background: rgba(31, 122, 99, 0.08);
+    border-color: var(--primary-neon);
+}
+
+/* Dark mode buttons override */
+.custom-navbar .btn-glass-outline, .hero-section .btn-glass-outline, footer .btn-glass-outline, .dark-panel .btn-glass-outline {
+    color: #F5F7FA !important;
+    border-color: rgba(255, 255, 255, 0.15);
+}
+.custom-navbar .btn-glass-outline:hover, .hero-section .btn-glass-outline:hover, footer .btn-glass-outline:hover, .dark-panel .btn-glass-outline:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--secondary-neon);
+}
+
+/* Badges */
+.badge-verified {
+    background: rgba(31, 122, 99, 0.1);
+    color: var(--primary-neon);
+    border: 1px solid rgba(31, 122, 99, 0.3);
+    padding: 6px 12px;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.badge-trust {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--secondary-neon);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    padding: 6px 12px;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* Matching Indicator Circle */
+.match-score-badge {
+    background: rgba(31, 122, 99, 0.08);
+    color: var(--primary-neon);
+    border: 1.5px solid rgba(31, 122, 99, 0.3);
+    font-size: 1.25rem;
+    font-weight: 800;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    box-shadow: 0 0 15px rgba(31, 122, 99, 0.1);
+}
+
+/* Custom Lists & Tables */
+.table-glass {
+    color: #081C2D !important;
+}
+.table-glass th {
+    border-bottom: 2px solid rgba(8, 28, 45, 0.08) !important;
+    color: #5A6A75;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+}
+.table-glass td {
+    border-bottom: 1px solid rgba(8, 28, 45, 0.04) !important;
+    vertical-align: middle;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-up {
+    animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Custom Glass Alerts */
+.alert-glass {
+    background: #081C2D !important;
+    color: #F5F7FA !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 10px 30px rgba(8, 28, 45, 0.15) !important;
+    border-radius: 12px !important;
+}
+
+.alert-glass-success {
+    border-left: 5px solid var(--secondary-neon) !important;
+}
+
+.alert-glass-danger {
+    border-left: 5px solid var(--danger-red) !important;
+}
+
+.alert-glass-info {
+    border-left: 5px solid var(--primary-neon) !important;
+}
+
+/* Bootstrap overrides for light/dark theme contrast */
+.text-light {
+    color: var(--text-primary) !important;
+}
+
+.text-secondary {
+    color: var(--text-secondary) !important;
+}
+
+/* Dark Theme Variables Override */
+body.dark-theme {
+    background-color: #081C2D;
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(31, 122, 99, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.1) 0px, transparent 50%);
+    background-attachment: fixed;
+    --text-primary: #F5F7FA;
+    --text-secondary: #9AA3A8;
+    --border-glass: rgba(255, 255, 255, 0.1);
+    --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+body.dark-theme .glass-panel {
+    background: rgba(8, 28, 45, 0.85) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    color: #F5F7FA !important;
+    box-shadow: var(--card-shadow) !important;
+}
+
+body.dark-theme .glass-panel:hover {
+    border-color: rgba(16, 185, 129, 0.3) !important;
+    box-shadow: 0 15px 40px rgba(16, 185, 129, 0.15) !important;
+}
+
+body.dark-theme .glass-input {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #F5F7FA !important;
+}
+body.dark-theme .glass-input:focus {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: var(--secondary-neon) !important;
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.3) !important;
+}
+body.dark-theme .glass-input option {
+    background-color: #081C2D;
+    color: #F5F7FA;
+}
+
+body.dark-theme .table-glass {
+    color: #F5F7FA !important;
+}
+body.dark-theme .table-glass th {
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1) !important;
+    color: #9AA3A8;
+}
+body.dark-theme .table-glass td {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+body.dark-theme .btn-glass-outline {
+    color: #F5F7FA !important;
+    border-color: rgba(255, 255, 255, 0.15);
+}
+body.dark-theme .btn-glass-outline:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--secondary-neon);
+}

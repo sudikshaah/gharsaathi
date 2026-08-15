@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5 animate-fade-up">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="glass-panel p-5">
+                <h2 class="mb-4 text-gradient">
+                    {% if is_edit %}Edit Employer Profile{% else %}Setup Employer Profile{% endif %}
+                </h2>
+                <p class="text-secondary mb-4">Provide details about your household location to begin finding nearby verified domestic helpers.</p>
+                
+                <form method="POST" action="">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="mb-3">
+                        <label class="form-label text-secondary fw-semibold">{{ form.family_name.label }}</label>
+                        {{ form.family_name(class="form-control glass-input", placeholder="e.g. Sharma Family") }}
+                        {% for error in form.family_name.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label text-secondary fw-semibold">{{ form.address_line1.label }}</label>
+                        {{ form.address_line1(class="form-control glass-input", placeholder="House no, Building, Street") }}
+                        {% for error in form.address_line1.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label text-secondary fw-semibold">{{ form.address_line2.label }}</label>
+                        {{ form.address_line2(class="form-control glass-input", placeholder="Locality, Sector") }}
+                        {% for error in form.address_line2.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <label class="form-label text-secondary fw-semibold">{{ form.city.label }}</label>
+                            {{ form.city(class="form-control glass-input") }}
+                            {% for error in form.city.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label text-secondary fw-semibold">{{ form.state.label }}</label>
+                            {{ form.state(class="form-control glass-input") }}
+                            {% for error in form.state.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label text-secondary fw-semibold">{{ form.pincode.label }}</label>
+                            {{ form.pincode(class="form-control glass-input", placeholder="110001") }}
+                            {% for error in form.pincode.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label text-secondary fw-semibold">{{ form.latitude.label }}</label>
+                            {{ form.latitude(class="form-control glass-input", placeholder="e.g. 28.6139") }}
+                            {% for error in form.latitude.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-secondary fw-semibold">{{ form.longitude.label }}</label>
+                            {{ form.longitude(class="form-control glass-input", placeholder="e.g. 77.2090") }}
+                            {% for error in form.longitude.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-neon py-2 px-4">
+                        <i class="bi bi-save"></i> Save Profile Details
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

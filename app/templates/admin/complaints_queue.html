@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-4 animate-fade-up">
+    <!-- Back to Admin Dashboard -->
+    <div class="mb-4">
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-sm btn-glass-outline">
+            <i class="bi bi-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <div class="glass-panel p-5">
+        <h2 class="mb-4 text-gradient"><i class="bi bi-exclamation-triangle me-2"></i> Dispute & Complaints Management</h2>
+        <p class="text-secondary mb-4">Investigate user disputes, set statuses, and moderate accounts to maintain platform trust.</p>
+
+        {% if complaints %}
+            <div class="table-responsive">
+                <table class="table table-glass align-middle">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Reporter ID</th>
+                            <th>Reported User ID</th>
+                            <th>Category</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for complaint in complaints %}
+                            <tr>
+                                <td>{{ complaint.id }}</td>
+                                <td>User {{ complaint.reporter_id }}</td>
+                                <td>User {{ complaint.reported_user_id }}</td>
+                                <td><span class="badge bg-warning bg-opacity-15 text-warning">{{ complaint.category.upper() }}</span></td>
+                                <td class="small text-light" style="max-width: 300px;">{{ complaint.description }}</td>
+                                <td>
+                                    {% if complaint.status == 'pending' %}
+                                        <span class="badge bg-danger bg-opacity-15 text-danger border border-danger border-opacity-30">Pending</span>
+                                    {% elif complaint.status == 'investigating' %}
+                                        <span class="badge bg-warning bg-opacity-15 text-warning border border-warning border-opacity-30">Investigating</span>
+                                    {% elif complaint.status == 'resolved' %}
+                                        <span class="badge bg-success bg-opacity-15 text-success border border-success border-opacity-30">Resolved</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary bg-opacity-15 text-secondary border border-secondary border-opacity-30">Dismissed</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="d-flex flex-column gap-1">
+                                        <form method="POST" action="" class="d-inline">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                            {% if complaint.status == 'pending' %}
+                                                <button type="submit" formaction="{{ url_for('admin.resolve_dispute', comp_id=complaint.id, status_val='investigating') }}" class="btn btn-sm btn-glass-outline w-100 py-1" style="font-size: 0.7rem;">Investigate</button>
+                                            {% endif %}
+                                            <button type="submit" formaction="{{ url_for('admin.resolve_dispute', comp_id=complaint.id, status_val='resolved') }}" class="btn btn-sm btn-success w-100 py-1" style="font-size: 0.7rem;">Resolve</button>
+                                            <button type="submit" formaction="{{ url_for('admin.resolve_dispute', comp_id=complaint.id, status_val='dismissed') }}" class="btn btn-sm btn-glass-outline w-100 py-1" style="font-size: 0.7rem;">Dismiss</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-5 text-secondary">
+                <i class="bi bi-shield-check text-gradient display-4 mb-2"></i>
+                <p class="mb-0 fs-5">All dispute queues are resolved. Nice job!</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

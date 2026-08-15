@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-4 animate-fade-up">
+    <!-- Header Block -->
+    <div class="row align-items-center mb-5 g-4">
+        <div class="col-md-8">
+            <h1 class="display-5 text-gradient">GharSaathi Admin Panel</h1>
+            <p class="text-secondary mb-0">System health statistics, helper credential verifications, dispute resolutions, and account moderations.</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{{ url_for('admin.verification_queue') }}" class="btn btn-neon me-2">
+                <i class="bi bi-file-check"></i> Verification Queue
+                {% if pending_docs_count > 0 %}
+                    <span class="badge bg-danger ms-1">{{ pending_docs_count }}</span>
+                {% endif %}
+            </a>
+            <a href="{{ url_for('admin.complaints_queue') }}" class="btn btn-glass-outline">
+                <i class="bi bi-exclamation-triangle"></i> Disputes Queue
+                {% if pending_complaints_count > 0 %}
+                    <span class="badge bg-danger ms-1">{{ pending_complaints_count }}</span>
+                {% endif %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Statistics Panel Grid -->
+    <div class="row g-4 mb-5 text-center">
+        <div class="col-md-3">
+            <div class="glass-panel p-4 h-100">
+                <div class="text-gradient display-5 fw-bold mb-2">{{ total_users }}</div>
+                <div class="text-secondary fw-semibold small">Registered Accounts</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="glass-panel p-4 h-100">
+                <div class="text-gradient display-5 fw-bold mb-2">{{ employers_count }}</div>
+                <div class="text-secondary fw-semibold small">Employers Profiles</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="glass-panel p-4 h-100">
+                <div class="text-gradient display-5 fw-bold mb-2">{{ helpers_count }}</div>
+                <div class="text-secondary fw-semibold small">Helpers Profiles</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="glass-panel p-4 h-100">
+                <div class="text-gradient display-5 fw-bold mb-2">{{ active_jobs }}</div>
+                <div class="text-secondary fw-semibold small">Active Job Listings</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Users Management list panel -->
+    <div class="glass-panel p-4 mb-5">
+        <h3 class="mb-4"><i class="bi bi-person-gear text-gradient me-2"></i> Account Moderation Directory</h3>
+        {% if users %}
+            <div class="table-responsive">
+                <table class="table table-glass align-middle">
+                    <thead>
+                        <tr>
+                            <th>User ID</th>
+                            <th>Phone Number</th>
+                            <th>Role</th>
+                            <th>Verification Check</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                            <tr>
+                                <td>{{ user.id }}</td>
+                                <td class="fw-bold">{{ user.phone_number }}</td>
+                                <td><span class="badge bg-secondary bg-opacity-25 text-light">{{ user.role.upper() }}</span></td>
+                                <td>
+                                    {% if user.role == 'helper' and user.helper_profile %}
+                                        {% if user.helper_profile.is_police_verified %}
+                                            <span class="text-success"><i class="bi bi-patch-check-fill"></i> Police Verified</span>
+                                        {% else %}
+                                            <span class="text-warning"><i class="bi bi-exclamation-triangle"></i> Not Verified</span>
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="text-secondary">N/A</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if user.is_active %}
+                                        <span class="badge bg-success bg-opacity-15 text-success border border-success border-opacity-30">Active</span>
+                                    {% else %}
+                                        <span class="badge bg-danger bg-opacity-15 text-danger border border-danger border-opacity-30">Suspended</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <form method="POST" action="{{ url_for('admin.toggle_user_active', user_id=user.id) }}">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        {% if user.is_active %}
+                                            <button type="submit" class="btn btn-sm btn-danger py-1 px-2" style="font-size: 0.75rem;">Suspend</button>
+                                        {% else %}
+                                            <button type="submit" class="btn btn-sm btn-success py-1 px-2" style="font-size: 0.75rem;">Activate</button>
+                                        {% endif %}
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-secondary py-3 text-center mb-0">No users found in database.</p>
+        {% endif %}
+    </div>
+
+    <!-- Disputes review panel -->
+    <div class="glass-panel p-4">
+        <h3 class="mb-4"><i class="bi bi-exclamation-triangle text-gradient me-2"></i> Recent Disputes Filed</h3>
+        {% if recent_complaints %}
+            <div class="table-responsive">
+                <table class="table table-glass align-middle">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Reporter ID</th>
+                            <th>Target User ID</th>
+                            <th>Category</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for complaint in recent_complaints %}
+                            <tr>
+                                <td>{{ complaint.id }}</td>
+                                <td>User {{ complaint.reporter_id }}</td>
+                                <td>User {{ complaint.reported_user_id }}</td>
+                                <td><span class="badge bg-warning bg-opacity-15 text-warning">{{ complaint.category.upper() }}</span></td>
+                                <td>{{ complaint.created_at.strftime('%Y-%m-%d') }}</td>
+                                <td><span class="badge bg-info bg-opacity-15 text-info">{{ complaint.status.title() }}</span></td>
+                                <td>
+                                    <a href="{{ url_for('admin.complaints_queue') }}" class="btn btn-sm btn-neon py-1 px-2" style="font-size: 0.75rem;">Manage</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-secondary py-3 text-center mb-0">No complaints reported.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-4 animate-fade-up">
+    <!-- Header Block -->
+    <div class="row align-items-center mb-5 g-4">
+        <div class="col-md-8">
+            <h1 class="display-5 text-gradient">Welcome, {{ employer.family_name }}!</h1>
+            <p class="text-secondary mb-0">Manage your active household job posts, review applicants, and browse hyper-local candidates.</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{{ url_for('employer.post_job') }}" class="btn btn-neon me-2">
+                <i class="bi bi-plus-circle"></i> Post a Job
+            </a>
+            <a href="{{ url_for('employer.setup_profile') }}" class="btn btn-glass-outline">
+                <i class="bi bi-pencil-square"></i> Edit Profile
+            </a>
+        </div>
+    </div>
+
+    <!-- Active Job Listings -->
+    <div class="glass-panel p-4 mb-5">
+        <h3 class="mb-4"><i class="bi bi-briefcase text-gradient me-2"></i> Your Household Job Posts</h3>
+        {% if jobs %}
+            <div class="table-responsive">
+                <table class="table table-glass align-middle">
+                    <thead>
+                        <tr>
+                            <th>Job Title</th>
+                            <th>Category</th>
+                            <th>Offered Salary</th>
+                            <th>Location Pincode</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for job in jobs %}
+                            <tr>
+                                <td class="fw-bold">{{ job.title }}</td>
+                                <td><span class="badge bg-secondary bg-opacity-25 text-light">{{ job.category.title() }}</span></td>
+                                <td>Rs. {{ job.salary_offered }}</td>
+                                <td>{{ job.address_pincode }}</td>
+                                <td>
+                                    {% if job.status == 'open' %}
+                                        <span class="badge bg-success bg-opacity-15 text-success border border-success border-opacity-30">Open</span>
+                                    {% elif job.status == 'paused' %}
+                                        <span class="badge bg-warning bg-opacity-15 text-warning border border-warning border-opacity-30">Paused</span>
+                                    {% else %}
+                                        <span class="badge bg-danger bg-opacity-15 text-danger border border-danger border-opacity-30">Closed</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <form method="POST" action="" class="d-inline">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        {% if job.status == 'open' %}
+                                            <button type="submit" formaction="{{ url_for('employer.update_job_status', job_id=job.id, status_val='paused') }}" class="btn btn-sm btn-glass-outline py-1">Pause</button>
+                                        {% else %}
+                                            <button type="submit" formaction="{{ url_for('employer.update_job_status', job_id=job.id, status_val='open') }}" class="btn btn-sm btn-glass-outline py-1">Open</button>
+                                        {% endif %}
+                                        <button type="submit" formaction="{{ url_for('employer.update_job_status', job_id=job.id, status_val='closed') }}" class="btn btn-sm btn-danger py-1" style="font-size: 0.75rem;">Close</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-4 text-secondary">
+                <i class="bi bi-folder-x fs-1 mb-2"></i>
+                <p class="mb-0">You haven't posted any jobs yet.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Applicants & Recommendations Section -->
+    <div class="row g-4 mb-5">
+        <!-- Applicants List -->
+        <div class="col-lg-6">
+            <div class="glass-panel p-4 h-100">
+                <h3 class="mb-4"><i class="bi bi-people text-gradient me-2"></i> Applications Received</h3>
+                {% if applications %}
+                    <div class="d-flex flex-column gap-3">
+                        {% for app in applications %}
+                            <div class="p-3 border border-secondary border-opacity-10 rounded-3" style="background: rgba(255,255,255,0.02);">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h5 class="mb-0">{{ app.helper.full_name }}</h5>
+                                        <span class="text-secondary small">Applied to: <strong>{{ app.job.title }}</strong></span>
+                                    </div>
+                                    <span class="badge bg-info bg-opacity-15 text-info border border-info border-opacity-30">{{ app.status.title() }}</span>
+                                </div>
+                                <div class="d-flex justify-content-end gap-2 mt-3">
+                                    <form method="POST" action="" class="d-inline">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        {% if app.status == 'applied' %}
+                                            <button type="submit" formaction="{{ url_for('employer.update_application_status', app_id=app.id, new_status='shortlisted') }}" class="btn btn-sm btn-glass-outline py-1 px-2">Shortlist</button>
+                                        {% endif %}
+                                        {% if app.status in ['applied', 'shortlisted'] %}
+                                            <button type="submit" formaction="{{ url_for('employer.update_application_status', app_id=app.id, new_status='interviewed') }}" class="btn btn-sm btn-glass-outline py-1 px-2">Interview</button>
+                                        {% endif %}
+                                        {% if app.status == 'interviewed' %}
+                                            <button type="submit" formaction="{{ url_for('employer.update_application_status', app_id=app.id, new_status='offered') }}" class="btn btn-sm btn-neon py-1 px-2">Offer Job</button>
+                                        {% endif %}
+                                        {% if app.status == 'offered' %}
+                                            <button type="submit" formaction="{{ url_for('employer.update_application_status', app_id=app.id, new_status='hired') }}" class="btn btn-sm btn-success py-1 px-2">Hire</button>
+                                        {% endif %}
+                                        <button type="submit" formaction="{{ url_for('employer.update_application_status', app_id=app.id, new_status='rejected') }}" class="btn btn-sm btn-danger py-1 px-2" style="font-size: 0.75rem;">Reject</button>
+                                    </form>
+                                    <a href="{{ url_for('public.helper_detail', helper_id=app.helper.id) }}" class="btn btn-sm btn-glass-outline py-1 px-2"><i class="bi bi-eye"></i> View Profile</a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-5 text-secondary">
+                        <i class="bi bi-person-exclamation fs-1 mb-2"></i>
+                        <p class="mb-0">No active applications currently submitted.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Matching Recommendations -->
+        <div class="col-lg-6">
+            <div class="glass-panel p-4 h-100">
+                <h3 class="mb-4"><i class="bi bi-cpu text-gradient me-2"></i> Match Engine Recommendations</h3>
+                {% if recommendations %}
+                    {% for job_id, list in recommendations.items() %}
+                        {% if list %}
+                            <div class="mb-4">
+                                <h5 class="text-info mb-3">Top Matches for Job ID {{ job_id }}</h5>
+                                <div class="d-flex flex-column gap-3">
+                                    {% for helper, score in list %}
+                                        <div class="d-flex align-items-center justify-content-between p-3 border border-secondary border-opacity-10 rounded-3" style="background: rgba(255,255,255,0.01);">
+                                            <div>
+                                                <h6 class="mb-1">{{ helper.full_name }}</h6>
+                                                <span class="text-secondary small">{{ helper.experience_years }} Yrs Exp &bull; Pincode {{ helper.location_pincode }}</span>
+                                            </div>
+                                            <div class="d-flex align-items-center gap-3">
+                                                <div class="match-score-badge" style="width: 48px; height: 48px; font-size: 1rem;">{{ score }}%</div>
+                                                <a href="{{ url_for('public.helper_detail', helper_id=helper.id) }}" class="btn btn-sm btn-neon"><i class="bi bi-eye"></i> Profile</a>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-5 text-secondary">
+                        <i class="bi bi-cpu-fill fs-1 mb-2"></i>
+                        <p class="mb-0">Post open jobs to see local recommendations.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Shortlisted Helpers Directory -->
+    <div class="glass-panel p-4">
+        <h3 class="mb-4"><i class="bi bi-bookmark-fill text-gradient me-2"></i> Your Saved / Shortlisted Helpers</h3>
+        {% if shortlisted %}
+            <div class="row g-3">
+                {% for item in shortlisted %}
+                    <div class="col-md-4">
+                        <div class="p-3 border border-secondary border-opacity-10 rounded-3" style="background: rgba(255,255,255,0.02);">
+                            <h5 class="mb-1">{{ item.helper.full_name }}</h5>
+                            <p class="text-secondary small mb-3">Pincode: {{ item.helper.location_pincode }} &bull; Rating: {{ item.helper.overall_rating }} <i class="bi bi-star-fill text-warning"></i></p>
+                            <div class="d-flex justify-content-between">
+                                <form method="POST" action="{{ url_for('employer.toggle_shortlist', helper_id=item.helper.id) }}">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="btn btn-sm btn-danger px-2"><i class="bi bi-trash"></i> Remove</button>
+                                </form>
+                                <a href="{{ url_for('public.helper_detail', helper_id=item.helper.id) }}" class="btn btn-sm btn-glass-outline px-2">View Profile</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-4 text-secondary">
+                <i class="bi bi-bookmark-x fs-1 mb-2"></i>
+                <p class="mb-0">You haven't bookmarked any helper profiles.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
