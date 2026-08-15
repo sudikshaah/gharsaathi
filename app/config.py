@@ -4,7 +4,9 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
     """Base Configuration class."""
-    SECRET_KEY = os.environ.get('SECRET_KEY', 'dev-key-ghar-saathi-super-secret')
+    SECRET_KEY = os.environ.get('SECRET_KEY', 'dev-key-sahayak-super-secret')
+    
+    # SQLALCHEMY_TRACK_MODIFICATIONS = False is set elsewhere
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # Upload configurations
@@ -20,7 +22,7 @@ class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.environ.get(
         'DATABASE_URL', 
-        f"sqlite:///{os.path.join(BASE_DIR, 'gharsaathi.db')}"
+        f"sqlite:///{os.path.join(BASE_DIR, 'sahayak.db')}"
     )
 
 class TestingConfig(Config):

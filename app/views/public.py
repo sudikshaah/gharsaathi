@@ -7,7 +7,7 @@ public_bp = Blueprint('public', __name__)
 
 @public_bp.route('/')
 def index():
-    """GharSaathi Homepage / Landing Page."""
+    """Sahayak Homepage / Landing Page."""
     # Fetch some stats for the visual dashboard
     total_helpers = Helper.query.count()
     verified_helpers = Helper.query.filter_by(is_police_verified=True).count()
